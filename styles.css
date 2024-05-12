@@ -1,0 +1,27 @@
+.stopwatch--parent {
+    display: flex;
+}
+
+.stopwatch--root {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 100%;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.stopwatch--content {
+    cursor: pointer;
+    font-size: 12px;
+    color: #888;
+}
+
+.stopwatch--clock {
+    margin-left: 2px;
+}
+
+#ide-top-btns .flex.flex-none.cursor-pointer.items-center {
+    opacity: 0!important;
+    display: none!important;
+}

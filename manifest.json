@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "LeetCode Stopwatch",
+  "description": "This extension customizes the LeetCode website",
+  "version": "1.0",
+  "permissions": ["activeTab", "https://leetcode.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
