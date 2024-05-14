@@ -1,9 +1,9 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "LeetCode Stopwatch",
   "description": "This extension customizes the LeetCode website",
   "version": "1.0",
-  "permissions": ["activeTab", "https://leetcode.com/*"],
+  "permissions": ["https://leetcode.com/*"],
   "content_scripts": [
     {
       "matches": ["https://leetcode.com/*"],

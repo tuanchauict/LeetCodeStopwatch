@@ -93,7 +93,7 @@ function tryAttachStopWatch() {
         // The page has been changed. The target element is not found.
         return;
     }
-    attachStopWatch();
+    attachStopWatch(target);
 }
 setInterval(tryAttachStopWatch, 1000);
 
