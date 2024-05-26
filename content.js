@@ -1,9 +1,7 @@
-function attachStopWatch(target) {
+function attachStopWatch(container) {
     const stopwatchElement = createStopWatchElement();
-    const container = target.parentElement.parentElement.parentElement;
     container.classList.add("stopwatch--parent");
-    container.append(stopwatchElement);
-    target.style.display = "none";
+    container.replaceChild(stopwatchElement, container.firstChild);
 }
 
 function createStopWatchElement() {
@@ -15,28 +13,37 @@ function createStopWatchElement() {
     const stateNode = root.getElementsByClassName("stopwatch--label")[0];
     const clockNode = root.getElementsByClassName("stopwatch--clock")[0];
 
+    let currentStorageKey = getStorageKey();
+
     const startCounting = function (startTimeMillis) {
         if (root.intervalId) {
             return;
         }
-        localStorage.setItem(getStorageKey(), startTimeMillis);
+        localStorage.setItem(currentStorageKey, startTimeMillis);
         root.intervalId = setInterval(clockTick, 500, clockNode, startTimeMillis);
         stateNode.innerText = "Stop";
         clockNode.innerText = toTimeString(getCurrentTimeInMillis() - startTimeMillis);
     }
-    const stopCounting = function () {
+    const stopCounting = function (shouldClearStorage = true) {
         clearInterval(root.intervalId);
         root.intervalId = null;
-        localStorage.removeItem(getStorageKey());
+        if (shouldClearStorage) {
+            localStorage.removeItem(currentStorageKey);
+        }
+        
         stateNode.innerText = "Start";
     }
 
-    const previousRunTime = localStorage.getItem(getStorageKey());
-    if (previousRunTime) {
-        startCounting(parseInt(previousRunTime));
-    } else {
-        stateNode.innerText = "Start";
-        clockNode.innerText = "00:00:00";
+    const restoreAndStartCounting = function () {
+        currentStorageKey = getStorageKey();
+        const previousRunTime = localStorage.getItem(currentStorageKey);
+        
+        if (previousRunTime) {
+            startCounting(parseInt(previousRunTime));
+        } else {
+            stateNode.innerText = "Start";
+            clockNode.innerText = "00:00:00";
+        }
     }
 
     root.onclick = function () {
@@ -48,6 +55,18 @@ function createStopWatchElement() {
     }
     const ONE_MIN = 60*1000;
     setTimeout(function() {startCounting(getCurrentTimeInMillis() - ONE_MIN)}, 2*ONE_MIN);
+    restoreAndStartCounting();
+
+    window.navigation.addEventListener("navigate", (event) => {
+        requestAnimationFrame(() => {
+            console.log("navigate", currentStorageKey, getStorageKey());
+            if (getStorageKey() === currentStorageKey) {
+                return;
+            }
+            stopCounting(false);
+            restoreAndStartCounting();
+        });
+    });
 
     return root;
 }
@@ -93,7 +112,8 @@ function tryAttachStopWatch() {
         // The page has been changed. The target element is not found.
         return;
     }
-    attachStopWatch(target);
+    const container = target.parentElement.parentElement.parentElement;
+    attachStopWatch(container);
 }
 setInterval(tryAttachStopWatch, 1000);
 
